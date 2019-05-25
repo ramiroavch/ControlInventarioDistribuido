@@ -22,8 +22,7 @@ public class ControlInventario {
         // TODO code application logic here
         
         if(args[0].startsWith("server")) {
-            try {
-                
+            try { 
                 InventarioServer serer = new InventarioServer();
                 serer.start(new Integer(args[1]), args[2]);
                 

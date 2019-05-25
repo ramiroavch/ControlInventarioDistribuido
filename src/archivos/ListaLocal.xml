@@ -1,0 +1,16 @@
+<ListaLocal>
+  <tienda codigo="Nodo1">
+    <articulo>
+      <codigo>Tomate</codigo>
+      <cantidad>5</cantidad>
+    </articulo>
+    <articulo>
+      <codigo>Lechuga</codigo>
+      <cantidad>4</cantidad>
+    </articulo>
+    <articulo>
+      <codigo>Papa</codigo>
+      <cantidad>12</cantidad>
+    </articulo>
+  </tienda>
+</ListaLocal>

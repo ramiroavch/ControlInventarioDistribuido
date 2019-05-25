@@ -16,7 +16,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.InputStreamReader;
-import controlinventario.XmlController;
+import controlinventario.DAOInventario;
 
 /**
  *
@@ -37,12 +37,12 @@ public class InventarioServer {
     private boolean sendFinishGame = false;
     private File file;
     private String ruta;
-    private XmlController xmlControl;
+    private DAOInventario inventario;
     
     public void start(int port, String name) throws IOException {
-        xmlControl = new XmlController();
-        ruta ="C:\\Users\\RAM\\Desktop\\";
         
+        inventario = new DAOInventario();
+        ruta ="C:\\Users\\RAM\\Desktop\\";
         System.out.println("Im listening ... on " + port + " I'm " + name);
         this.name = name;
         serverSocket = new ServerSocket(port);
@@ -134,25 +134,27 @@ public class InventarioServer {
 
         } 
         else if (greeting.startsWith("agregarArticulo")){
+            out.println("Entre en agregarArticulo");
             int totallength = "agregarArticulo".length();
             String articulo= greeting.substring(totallength,greeting.length());
             String[] valores= articulo.split("#");
             String codigo = valores[0];
             int cantidad = Integer.parseInt(valores[1]);
-            if(xmlControl.buscarArticulo(codigo)==true){
-                out.print("ya está el articulo");
-                if(xmlControl.aumentarCantidad(codigo,cantidad)){
-                    out.println("aumentada la cantidad");
+            
+            if(inventario.buscarTienda(name)== true){
+                
+                if(inventario.buscarArticulo(name, codigo) == true){
+                    inventario.actualizarArticulo(name,codigo,cantidad);
                 }else{
-                    out.println("error al aumentar la cantidad de un artículo");
+                    inventario.agregarArticulo(codigo, cantidad, name);
                 }
-            }else{
-                out.println("entro "+codigo);
+            /*}else{
+                out.println("no consegui articulo "+codigo);
                 if(xmlControl.agregarArticulo(codigo,cantidad)){
                     out.println("articulo agregado");
                 }else{
                     out.println("error al agregar el articulo");
-                }
+                }*/
             }
         }else {
             System.out.println("Mensaje no reconocido");
@@ -177,6 +179,10 @@ public class InventarioServer {
         this.start(port, name);
 
     }
+    
+    
+    
+    
     private void sendingPapa() throws InterruptedException, IOException {
 
         boolean found = false;
@@ -241,6 +247,7 @@ public class InventarioServer {
         clientSocket.close();
         serverSocket.close();
     }
+    
     public void archivoReplica(String lista) throws IOException{
         file= new File(ruta+name+".txt");
         BufferedWriter bw;

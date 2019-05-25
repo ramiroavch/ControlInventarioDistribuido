@@ -16,6 +16,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -28,14 +29,15 @@ import org.w3c.dom.NodeList;
  * @author RAM
  */
 public class XmlController {
-    File archivo;
+    File archivo = new File ("ListaLocal.xml");
     DocumentBuilderFactory dbf;
     Document document = null;
-    DocumentBuilder documentBuilder=null;
+    DocumentBuilder documentBuilder = null;
     DOMImplementation implementation;
+    
     public boolean buscarArchivo(){
         try{
-            archivo = new File("ListaLocal.xml");
+            //archivo = new File("ListaLocal.xml");
             if (archivo.exists()) {
                 dbf = DocumentBuilderFactory.newInstance();
                 documentBuilder = dbf.newDocumentBuilder();
@@ -51,17 +53,16 @@ public class XmlController {
         }
         return(false);
     }
+    
     public boolean buscarArticulo(String codigo){
         if(buscarArchivo()==true){
             NodeList listaArticulos = document.getElementsByTagName("articulo");
             int i=0;
             while(i<listaArticulos.getLength()){
                 Node nodo = listaArticulos.item(i);
-                System.out.println(nodo.getNodeType());
                 if (nodo.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) nodo;
                     String codigo_element = element.getAttribute("codigo");
-                    System.out.println(codigo_element);
                     if(codigo_element.equals(codigo)){
                         return(true);   
                     }
@@ -77,17 +78,16 @@ public class XmlController {
         while(i<listaArticulos.getLength()){
             Node nodo = listaArticulos.item(i);
             if (nodo.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element) nodo;
-                String codigo_element = element.getAttribute("codigo");
+                String codigo_element = nodo.getAttributes().item(0).getNodeValue();
+                System.out.println(codigo_element);
                 try{
                 if(codigo_element.equals(codigo)){
-                    NodeList cantidades;
-                    cantidades= element.getElementsByTagName("cantidad");
-                    Element cantidad_element= (Element) cantidades.item(0);
-                    System.out.println(cantidades.item(0));
-                    int cantidad_nueva=Integer.parseInt(cantidad_element.getNodeValue());
+                    Node nodo_cantidad = nodo.getChildNodes().item(0);
+                    System.out.println(nodo_cantidad.getTextContent().trim());
+                    int cantidad_nueva=Integer.parseInt(nodo_cantidad.getTextContent().trim());
                     cantidad_nueva+=cantidad;
-                    cantidad_element.setNodeValue(String.valueOf(cantidad_nueva));
+                    System.out.println(cantidad_nueva);
+                    nodo_cantidad.setNodeValue(String.valueOf(cantidad_nueva));
                     return(true);
                 }
                 }catch(Exception e){
@@ -100,27 +100,45 @@ public class XmlController {
     }
     public boolean agregarArticulo(String codigo,int cantidad){
         try{
+            System.out.println("Agrego nuevo");
+               
         dbf = DocumentBuilderFactory.newInstance();
         documentBuilder = dbf.newDocumentBuilder();
-        implementation= documentBuilder.getDOMImplementation();
-        document=implementation.createDocument(null,"ListaLocal",null);
-        document.setXmlVersion("1.0");
-        Element rootElement;
-        rootElement = document.getDocumentElement();
+        document = documentBuilder.parse(archivo);
+        
+        //implementation= documentBuilder.getDOMImplementation();
+        //document=implementation.createDocument(null,"ListaLocal",null);
+        //document.setXmlVersion("1.0");
+        
+        
+       // Element rootElement;
+       // rootElement = 
+       document.getDocumentElement().normalize();
+        
         Element articulo = document.createElement("articulo");
-        rootElement.appendChild(articulo);
-        Attr attr;
-        attr = document.createAttribute("codigo");
-        attr.setValue(codigo);
-        articulo.setAttributeNode(attr);
+        Attr attr = document.createAttribute("codigo");
+        attr.setValue("pupu"); 
+        //articulo.appendChild(articulo)
+        //rootElement.appendChild(articulo);
+        //Attr attr;
+        
+
+        
+        
         Element nombre = document.createElement("cantidad");
+        
+	
+        NodeList producto = document.getDocumentElement().getElementsByTagName("ListaLocal");
+        producto.item(0).appendChild(articulo);
+        
         nombre.appendChild(document.createTextNode(String.valueOf(cantidad)));
+        articulo.setAttributeNode(attr);
         articulo.appendChild(nombre);
-	Source source = new DOMSource(document);
+        /*Source source = new DOMSource(document);
 	StreamResult result;
         result = new StreamResult(new File("ListaLocal.xml"));
         Transformer transformer=TransformerFactory.newInstance().newTransformer();
-        transformer.transform(source,result);
+        transformer.transform(source,result);*/
         }catch (Exception pce) {
             pce.printStackTrace();
         }
