@@ -40,9 +40,7 @@ public class DAOInventario {
 
     private Element TiendatoXmlElement(String codigo) {
         Element tienda = new Element("tienda");
-        Element key = new Element("codigo");
-        key.setText(codigo);     
-        tienda.addContent(key);
+        tienda.setAttribute("codigo",codigo);
         return tienda;
     }
     
@@ -118,23 +116,24 @@ public class DAOInventario {
     
     public boolean agregarArticulo(String codigo, int cantidad, String tiendacod) {
         System.out.println("entre agregar articulo");
-         List tiendas = this.root.getChildren("tienda");
-         Iterator i = tiendas.iterator();
-         boolean resultado = false;
-        while (i.hasNext()) {
-            Element e = (Element) i.next();
-            if (tiendacod.equals(e.getAttribute("codigo").getValue())) {
-                List articulos = e.getChildren("articulo");
-                e.addContent(ArticulotoXmlElement(codigo, cantidad));
-                resultado = updateDocument();
-                return resultado;
+        List tiendas = this.root.getChildren("tienda");
+        Iterator i = tiendas.iterator();
+        boolean resultado = false;
+            System.out.println("Consegui la tienda");
+            while (i.hasNext()) {
+                Element e = (Element) i.next();
+                if (tiendacod.equals(e.getAttribute("codigo").getValue())) {
+                    List articulos = e.getChildren("articulo");
+                    e.addContent(ArticulotoXmlElement(codigo, cantidad));
+                    resultado = updateDocument();
+                    return resultado;
+                }
             }
-        }
         return false;
     }
     
     public boolean buscarTienda(String codigo) {
-         List tiendas = this.root.getChildren("tienda");
+        List tiendas = this.root.getChildren("tienda");
         return buscar(tiendas, codigo);
     }
 

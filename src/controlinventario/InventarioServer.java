@@ -124,12 +124,16 @@ public class InventarioServer {
         } else if (greeting.startsWith("actualizalista")) {
 
             String lista = greeting.substring("actualizalista".length());
-
             String[] listatmp = lista.split(",");
             this.participant = new HashMap<String, String>();
             for (String tmp : listatmp) {
                 String[] finaltmp = tmp.split("#");
                 this.participant.put(finaltmp[0], finaltmp[1]);
+                if(inventario.buscarTienda(finaltmp[0])==false){
+                    if(inventario.agregarTienda(finaltmp[0])==false){
+                        out.print("Se detecto uan nueva tienda y no se guardó");
+                    }
+                }
             }
 
         } 
@@ -148,13 +152,9 @@ public class InventarioServer {
                 }else{
                     inventario.agregarArticulo(codigo, cantidad, name);
                 }
-            /*}else{
-                out.println("no consegui articulo "+codigo);
-                if(xmlControl.agregarArticulo(codigo,cantidad)){
-                    out.println("articulo agregado");
-                }else{
-                    out.println("error al agregar el articulo");
-                }*/
+            }else{
+                inventario.agregarTienda(name);
+                inventario.agregarArticulo(codigo, cantidad, name);
             }
         }else {
             System.out.println("Mensaje no reconocido");
