@@ -8,24 +8,15 @@ package controlinventario;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.InputStreamReader;
-import controlinventario.JsonController;
-
+import controlinventario.XmlController;
 
 /**
  *
@@ -45,11 +36,12 @@ public class InventarioServer {
     private String name = "";
     private boolean sendFinishGame = false;
     private File file;
-    private String ruta ="C:\\Users\\RAM\\Desktop\\";
-    private JsonController controller;
+    private String ruta;
+    private XmlController xmlControl;
     
     public void start(int port, String name) throws IOException {
-
+        xmlControl = new XmlController();
+        ruta ="C:\\Users\\RAM\\Desktop\\";
         
         System.out.println("Im listening ... on " + port + " I'm " + name);
         this.name = name;
@@ -58,7 +50,6 @@ public class InventarioServer {
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String greeting = in.readLine();
-        controller=new JsonController();
         
         if (greeting.startsWith("regparticipante")) {
                
@@ -143,15 +134,26 @@ public class InventarioServer {
 
         } 
         else if (greeting.startsWith("agregarArticulo")){
-            
-            
             int totallength = "agregarArticulo".length();
-           
-            String[] valores= greeting.split(",");
-            String articulo = valores[1];
-            String cantidad = valores [2];
-            controller.agregarElemento(articulo, port);
-            
+            String articulo= greeting.substring(totallength,greeting.length());
+            String[] valores= articulo.split("#");
+            String codigo = valores[0];
+            int cantidad = Integer.parseInt(valores[1]);
+            if(xmlControl.buscarArticulo(codigo)==true){
+                out.print("ya está el articulo");
+                if(xmlControl.aumentarCantidad(codigo,cantidad)){
+                    out.println("aumentada la cantidad");
+                }else{
+                    out.println("error al aumentar la cantidad de un artículo");
+                }
+            }else{
+                out.println("entro "+codigo);
+                if(xmlControl.agregarArticulo(codigo,cantidad)){
+                    out.println("articulo agregado");
+                }else{
+                    out.println("error al agregar el articulo");
+                }
+            }
         }else {
             System.out.println("Mensaje no reconocido");
             out.println("mensaje corrupto vete de aqui");
