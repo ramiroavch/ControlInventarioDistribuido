@@ -138,13 +138,16 @@ public class InventarioServer {
 
         } 
         else if (greeting.startsWith("agregarArticulo")){
+            String nombre=name;
             out.println("Entre en agregarArticulo");
             int totallength = "agregarArticulo".length();
             String articulo= greeting.substring(totallength,greeting.length());
             String[] valores= articulo.split("#");
             String codigo = valores[0];
             int cantidad = Integer.parseInt(valores[1]);
-            
+            if(valores[2]!=null){
+                nombre=valores[2];
+            }
             if(inventario.buscarTienda(name)== true){
                 
                 if(inventario.buscarArticulo(name, codigo) == true){
@@ -156,6 +159,20 @@ public class InventarioServer {
                 inventario.agregarTienda(name);
                 inventario.agregarArticulo(codigo, cantidad, name);
             }
+            for (Map.Entry<String, String> entry : participant.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+
+                if (!key.equals(this.name)) {
+
+                    ClientMessage sendmessage = new ClientMessage();
+                    sendmessage.startConnection(value.substring(5), new Integer(value.substring(0, 4)));
+                    sendmessage.sendMessage("agregarArticulo" + codigo+"#"+cantidad+"#"+name);
+
+                }
+
+            }
+            
         }else {
             System.out.println("Mensaje no reconocido");
             out.println("mensaje corrupto vete de aqui");
