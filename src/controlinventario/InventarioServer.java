@@ -152,7 +152,7 @@ public class InventarioServer {
             String codigo = valores[0];
             int cantidad = Integer.parseInt(valores[1]);
             if(valores.length==3){
-                nombre=valores[3];
+                nombre=valores[2];
             }
             if(inventario.buscarTienda(nombre)== true){
                 

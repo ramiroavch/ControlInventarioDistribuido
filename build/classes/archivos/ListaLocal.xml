@@ -5,4 +5,6 @@
       <cantidad>10</cantidad>
     </articulo>
   </tienda>
+  <tienda codigo="grp1" />
+  <tienda codigo="grp3" />
 </ListaLocal>
