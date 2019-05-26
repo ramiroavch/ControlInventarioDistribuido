@@ -61,7 +61,7 @@ public class InventarioServer {
 
             // agregar participante
             this.participant.put(partipante, puerto + ":" + ip);
-
+            System.out.println(this.participant);
             // paseo por cada uno de los elementos de los participantes para enviar la lista
             for (Map.Entry<String, String> entry : participant.entrySet()) {
                 String key = entry.getKey();
@@ -71,7 +71,6 @@ public class InventarioServer {
                     ClientMessage sendmessage = new ClientMessage();
                     sendmessage.startConnection(value.substring(5), new Integer(value.substring(0, 4)));
                     sendmessage.sendMessage("actualizalista" + this.serializarLista());
-                    System.out.println("llamé a actualizar lista");
 
                 }
                     if(inventario.buscarTienda(key)==false){
@@ -145,22 +144,39 @@ public class InventarioServer {
 
         } 
         else if (greeting.startsWith("agregarArticulo")){
+            String nombre=name;
             out.println("Entre en agregarArticulo");
             int totallength = "agregarArticulo".length();
             String articulo= greeting.substring(totallength,greeting.length());
             String[] valores= articulo.split("#");
             String codigo = valores[0];
             int cantidad = Integer.parseInt(valores[1]);
-            if(inventario.buscarTienda(name)== true){
+            if(valores.length==3){
+                nombre=valores[3];
+            }
+            if(inventario.buscarTienda(nombre)== true){
                 
-                if(inventario.buscarArticulo(name, codigo) == true){
-                    inventario.actualizarArticulo(name,codigo,cantidad);
+                if(inventario.buscarArticulo(nombre, codigo) == true){
+                    inventario.actualizarArticulo(nombre,codigo,cantidad);
                 }else{
-                    inventario.agregarArticulo(codigo, cantidad, name);
+                    inventario.agregarArticulo(codigo, cantidad, nombre);
                 }
             }else{
-                inventario.agregarTienda(name);
-                inventario.agregarArticulo(codigo, cantidad, name);
+                inventario.agregarTienda(nombre);
+                inventario.agregarArticulo(codigo, cantidad, nombre);
+            }
+            if(valores.length!=3)
+            {
+                for (Map.Entry<String, String> entry : participant.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    if (!key.equals(this.name)) {
+                        ClientMessage sendmessage = new ClientMessage();
+                        sendmessage.startConnection(value.substring(5), new Integer(value.substring(0, 4)));
+                        sendmessage.sendMessage("agregarArticulo" + codigo+"#"+cantidad+"#"+nombre);
+                        System.out.println("llamé a actualizar lista");
+                    }
+                }
             }
             
         }else {
