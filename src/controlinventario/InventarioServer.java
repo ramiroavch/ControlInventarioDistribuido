@@ -52,7 +52,7 @@ public class InventarioServer {
         String greeting = in.readLine();
         
         if (greeting.startsWith("regparticipante")) {
-               
+            
             int totallength = "regparticipante".length();
 
             String partipante = greeting.substring(totallength, totallength + 4);
@@ -66,14 +66,23 @@ public class InventarioServer {
             for (Map.Entry<String, String> entry : participant.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-
                 if (!key.equals(this.name)) {
-
+                    System.out.println("entre al if de  registrar participante"); 
                     ClientMessage sendmessage = new ClientMessage();
                     sendmessage.startConnection(value.substring(5), new Integer(value.substring(0, 4)));
                     sendmessage.sendMessage("actualizalista" + this.serializarLista());
+                    System.out.println("llamé a actualizar lista");
 
                 }
+                else{
+                    if(inventario.buscarTienda(name)==false){
+                        if(inventario.agregarTienda(name)==false){
+                            out.print("No se pudo guardar la tienda local en el xml");
+                        }
+                    }
+                    
+                }
+                
 
             }
 
@@ -131,23 +140,19 @@ public class InventarioServer {
                 this.participant.put(finaltmp[0], finaltmp[1]);
                 if(inventario.buscarTienda(finaltmp[0])==false){
                     if(inventario.agregarTienda(finaltmp[0])==false){
-                        out.print("Se detecto uan nueva tienda y no se guardó");
+                        out.print("Se detecto una nueva tienda y no se guardó");
                     }
                 }
             }
 
         } 
         else if (greeting.startsWith("agregarArticulo")){
-            String nombre=name;
             out.println("Entre en agregarArticulo");
             int totallength = "agregarArticulo".length();
             String articulo= greeting.substring(totallength,greeting.length());
             String[] valores= articulo.split("#");
             String codigo = valores[0];
             int cantidad = Integer.parseInt(valores[1]);
-            if(valores[2]!=null){
-                nombre=valores[2];
-            }
             if(inventario.buscarTienda(name)== true){
                 
                 if(inventario.buscarArticulo(name, codigo) == true){
@@ -158,19 +163,6 @@ public class InventarioServer {
             }else{
                 inventario.agregarTienda(name);
                 inventario.agregarArticulo(codigo, cantidad, name);
-            }
-            for (Map.Entry<String, String> entry : participant.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-
-                if (!key.equals(this.name)) {
-
-                    ClientMessage sendmessage = new ClientMessage();
-                    sendmessage.startConnection(value.substring(5), new Integer(value.substring(0, 4)));
-                    sendmessage.sendMessage("agregarArticulo" + codigo+"#"+cantidad+"#"+name);
-
-                }
-
             }
             
         }else {
