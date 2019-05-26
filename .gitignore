@@ -1,1 +1,8 @@
 /dist/
+nbproject/private/config\.properties
+
+build/classes/archivos/ListaLocal\.xml
+
+build/classes/controlinventario/InventarioServer\.class
+
+src/archivos/ListaLocal\.xml
