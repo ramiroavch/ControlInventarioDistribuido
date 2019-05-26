@@ -74,14 +74,12 @@ public class InventarioServer {
                     System.out.println("llamé a actualizar lista");
 
                 }
-                else{
-                    if(inventario.buscarTienda(name)==false){
-                        if(inventario.agregarTienda(name)==false){
+                    if(inventario.buscarTienda(key)==false){
+                        if(inventario.agregarTienda(key)==false){
                             out.print("No se pudo guardar la tienda local en el xml");
                         }
                     }
                     
-                }
                 
 
             }
