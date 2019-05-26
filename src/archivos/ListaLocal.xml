@@ -1,8 +1,3 @@
 <ListaLocal>
-  <tienda codigo="grp2">
-    <articulo>
-      <codigo>Papa</codigo>
-      <cantidad>10</cantidad>
-    </articulo>
-  </tienda>
+  <tienda codigo="grp2" />
 </ListaLocal>
