@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.io.InputStreamReader;
 import controlinventario.DAOInventario;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -178,7 +180,18 @@ public class InventarioServer {
                     }
                 }
             }
-            
+        }else if(greeting.startsWith("ImprimirArticulosxTienda")){
+            try{
+            inventario.imprimirArticulosxTienda();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }else if(greeting.startsWith("ImprimirArticulosEmpresa")){
+            try{
+            inventario.imprimirArticulosEmpresa();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }else {
             System.out.println("Mensaje no reconocido");
             out.println("mensaje corrupto vete de aqui");

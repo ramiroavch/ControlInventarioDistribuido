@@ -5,8 +5,12 @@
  */
 package controlinventario;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,6 +28,8 @@ import org.jdom.output.XMLOutputter;
 public class DAOInventario {
      private Element root;
      private String fileLocation = "src//archivos//ListaLocal.xml";
+     private File file;
+     private String ruta="src//archivos//";
 
     public DAOInventario() {
         try {
@@ -55,13 +61,106 @@ public class DAOInventario {
         return articulo;
     }
 
-   /*Método que retorna un Estudiante. A este metodo se le manda un Element y con
-    sus datos se hará los pasos requeridos para crear el Estudiante*/
-    /*private Estudiante EstudianteToObject(Element element) throws ParseException {
-        Estudiante nEstudiante = new Estudiante(Integer.parseInt(element.getChildText("cedula")),element.getChildText("nombreyapellido"),
-                                        Float.parseFloat(element.getChildText("eficiencia")));
-        return nEstudiante;
-    }*/
+        
+    public void imprimirArticulosxTienda() throws IOException{
+        file= new File(ruta+"ListaProductosPorTienda.txt");
+        BufferedWriter bw;
+        bw=new BufferedWriter(new FileWriter(file));
+        List tiendas = this.root.getChildren("tienda");
+        Iterator i = tiendas.iterator();
+        while (i.hasNext()) {
+            Element e = (Element) i.next();
+            bw.write("Tienda: "+e.getAttribute("codigo").getValue());
+            bw.newLine();
+            List articulos = e.getChildren("articulo");
+            Iterator j = articulos.iterator();
+            while (j.hasNext()) {
+                Element f = (Element) j.next();
+                bw.write("Articulo: "+f.getChild("codigo").getValue()+" ,Cantidad: "+f.getChild("cantidad").getValue());
+                bw.newLine();
+            }     
+        }
+        bw.close();
+    }
+    
+    public List get_articulos(){
+        List tiendas = this.root.getChildren("tienda");
+        Iterator i = tiendas.iterator();
+        List art=null;
+        while (i.hasNext()) {
+            Element e = (Element) i.next();
+            List articulos = e.getChildren("articulo");
+            Iterator j = articulos.iterator();
+            int z=0;
+            while (j.hasNext()) {
+                Element f = (Element) j.next();
+                if(art!=null){
+                        String value=(String) art.get(z);
+                        String valores[]=value.split("#");
+                        if(valores[0]==f.getChild("codigo").getValue()){
+                        art.set(z,f.getChild("codigo").getValue()+"#"+String.valueOf(Integer.parseInt(valores[1])+Integer.parseInt(f.getChild("cantidad").getValue())));
+                        }else{
+                            art.add(f.getChild("codigo").getValue()+"#"+f.getChild("cantidad").getValue());
+                        }
+                }
+                else{
+                    art=new ArrayList();
+                    art.add(f.getChild("codigo").getValue()+"#"+f.getChild("cantidad").getValue());
+                }
+                
+            }     
+        }
+        return(art);
+    }
+    public List sumarArray(){
+        List z=get_articulos();
+        List aux=get_articulos();
+        List listf=new ArrayList();
+        int i=0;
+        int j=0;
+        int suma=0;
+        System.out.println(z);
+        while(i<z.size()){
+            String valor = z.get(i).toString();
+            String[] valores = valor.split("#");
+            suma = Integer.parseInt(valores[1]);
+            j = i+1;
+            System.out.println(i+"i");
+            while(j < aux.size()){
+                String valor2 = aux.get(j).toString();
+                String[] valores2 = valor2.split("#");
+                System.out.println(j+"j");
+                System.out.println(valores[0]+valores2[0]);
+                
+                if( valores[0].equals(valores2[0]) ){
+                     System.out.println("entre");
+                    suma=suma+Integer.parseInt(valores2[1]);
+                    System.out.println(suma);
+                    z.remove(j);
+                }
+                
+                j++;
+            }
+            listf.add(valores[0]+"#"+String.valueOf(suma));
+            i++;
+        }
+        return listf;
+    }
+    public void imprimirArticulosEmpresa() throws IOException{
+        file= new File(ruta+"ListaProductosEmpresa.txt");
+        BufferedWriter bw;
+        bw = new BufferedWriter(new FileWriter(file));
+        List tiendas = sumarArray();
+        Iterator i = tiendas.iterator();
+        while (i.hasNext()) {
+            String val=(String)i.next();
+            String valores[]=val.split("#");
+            bw.write("Articulo: "+valores[0]+", Cantidad: "+valores[1]);
+            bw.newLine();    
+        }
+        bw.close();
+    }
+
 
     private boolean updateDocument() {
         try {
