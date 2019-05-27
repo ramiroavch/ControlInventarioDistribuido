@@ -125,21 +125,17 @@ public class DAOInventario {
             String[] valores = valor.split("#");
             suma = Integer.parseInt(valores[1]);
             j = i+1;
-            System.out.println(i+"i");
             while(j < aux.size()){
                 String valor2 = aux.get(j).toString();
-                String[] valores2 = valor2.split("#");
-                System.out.println(j+"j");
-                System.out.println(valores[0]+valores2[0]);
-                
+                String[] valores2 = valor2.split("#");           
                 if( valores[0].equals(valores2[0]) ){
-                     System.out.println("entre");
                     suma=suma+Integer.parseInt(valores2[1]);
-                    System.out.println(suma);
                     z.remove(j);
+                    aux.remove(j);
                 }
-                
+                else{
                 j++;
+                }
             }
             listf.add(valores[0]+"#"+String.valueOf(suma));
             i++;
