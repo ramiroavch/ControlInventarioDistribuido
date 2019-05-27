@@ -26,7 +26,7 @@ import org.jdom.output.XMLOutputter;
  */
 
 public class DAOInventario {
-     private Element root;
+     public Element root;
      private String fileLocation = "src//archivos//ListaLocal.xml";
      private File file;
      private String ruta="src//archivos//";
@@ -70,17 +70,16 @@ public class DAOInventario {
         Iterator i = tiendas.iterator();
         while (i.hasNext()) {
             Element e = (Element) i.next();
-            bw.write("Tienda: "+e.getAttribute("codigo").getValue());
-            bw.newLine();
+            System.out.println("Tienda: "+e.getAttribute("codigo").getValue());
             List articulos = e.getChildren("articulo");
             Iterator j = articulos.iterator();
             while (j.hasNext()) {
                 Element f = (Element) j.next();
-                bw.write("Articulo: "+f.getChild("codigo").getValue()+" ,Cantidad: "+f.getChild("cantidad").getValue());
-                bw.newLine();
+                System.out.println("Articulo: "+f.getChild("codigo").getValue()+" ,Cantidad: "+f.getChild("cantidad").getValue());
+//                bw.newLine();
             }     
         }
-        bw.close();
+  //      bw.close();*/
     }
     
     public List get_articulos(){
@@ -119,7 +118,6 @@ public class DAOInventario {
         int i=0;
         int j=0;
         int suma=0;
-        System.out.println(z);
         while(i<z.size()){
             String valor = z.get(i).toString();
             String[] valores = valor.split("#");

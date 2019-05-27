@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import controlinventario.DAOInventario;
 import java.util.Iterator;
 import java.util.List;
+import org.jdom.Element;
 
 /**
  *
@@ -181,14 +182,25 @@ public class InventarioServer {
                 }
             }
         }else if(greeting.startsWith("ImprimirArticulosxTienda")){
-            try{
-            inventario.imprimirArticulosxTienda();
+            out.println("ImprimirArticulosxTienda");
+            /*try{
+            List tiendas = inventario.root.getChildren("tienda");
+            Iterator i = tiendas.iterator();
+            while (i.hasNext()) {
+                Element e = (Element) i.next();
+                out.println("Tienda: "+e.getAttribute("codigo").getValue());
+                List articulos = e.getChildren("articulo");
+                Iterator j = articulos.iterator();
+                    while (j.hasNext()) {
+                        Element f = (Element) j.next();
+                        out.println("Articulo: "+f.getChild("codigo").getValue()+" ,Cantidad: "+f.getChild("cantidad").getValue());
             }catch(Exception e){
                 e.printStackTrace();
-            }
+            } */    
         }else if(greeting.startsWith("ImprimirArticulosEmpresa")){
             try{
-            inventario.imprimirArticulosEmpresa();
+            //inventario.imprimirArticulosEmpresa();
+            out.println("ImprimirArticulosEmpresa");
             }catch(Exception e){
                 e.printStackTrace();
             }
