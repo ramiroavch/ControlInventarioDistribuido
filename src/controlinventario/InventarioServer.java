@@ -162,7 +162,7 @@ public class InventarioServer {
             }
             if(inventario.buscarTienda(nombre)== true){
                 
-                if(inventario.buscarArticulo(nombre, codigo,"n",0) == true){
+                if(inventario.buscarArticulo(nombre, codigo) == true){
                     inventario.actualizarArticulo(nombre,codigo,cantidad);
                 }else{
                     inventario.agregarArticulo(codigo, cantidad, nombre);
@@ -208,7 +208,7 @@ public class InventarioServer {
                 nombre=valores[4];
             }                                               
             if(inventario.buscarTienda(nombre)== true){
-                if(inventario.buscarArticulo(nombre, codigoArticulo,"s",cantidad) == true){   
+                if(inventario.buscarArticulo(nombre, codigoArticulo) == true){   
                     if(!compra.buscarCliente(codigoCliente)){
                         compra.agregarCliente(codigoCliente,nombreCliente);
                     }
@@ -221,7 +221,7 @@ public class InventarioServer {
                     }
                     inventario.restarArticulo(nombre,codigoArticulo,cantidad);
                 }else{
-                    out.println("no se pudo comprar");
+                    //inventario.agregarArticulo(codigoCliente, cantidad, nombre);
                 }
             }
             else{
