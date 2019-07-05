@@ -216,7 +216,7 @@ public class DAOInventario {
             while (i.hasNext()) {
                 Element e = (Element) i.next();
                 if (tiendacod.equals(e.getAttribute("codigo").getValue())) {
-                    List articulos = e.getChildren("articulo");
+                    //List articulos = e.getChildren("articulo");
                     e.addContent(ArticulotoXmlElement(codigo, cantidad));
                     resultado = updateDocument();
                     return resultado;
@@ -269,38 +269,33 @@ public class DAOInventario {
         resultado = updateDocument();
         return resultado;
     }
-   
-    /* @param cedula cedula del Estudiante a borrar
-     * @return valor boleano con la condicion de exito  */
-   /* public boolean borrarPersona(Integer cedula) {
+    public boolean restarArticulo(String tiendacod,String codigo,int cantidad) {
+        List tiendas = this.root.getChildren("tienda");
         boolean resultado = false;
-        Element aux = new Element("Estudiante");
-        List Estudiantes = this.root.getChildren("Estudiante");
-        while (aux != null) {
-            aux = DaoEstudianteXml.buscar(Estudiantes, Integer.toString(cedula));
-            if (aux != null) {
-                Estudiantes.remove(aux);
-                resultado = updateDocument();
+        Iterator i = tiendas.iterator();
+        while (i.hasNext()) {
+            Element e = (Element) i.next();
+            if (tiendacod.equals(e.getAttribute("codigo").getValue())) {
+                List articulos = e.getChildren("articulo");
+                Iterator j=articulos.iterator();
+                while (j.hasNext()) {
+                    Element f = (Element) j.next();
+                    if (codigo.equals(f.getChild("codigo").getValue())) {
+                        int cantidad_tienda=Integer.parseInt(f.getChild("cantidad").getValue());//-cantidad;
+                        int nueva_cantidad=0;
+                        if (cantidad_tienda>=cantidad){
+                            nueva_cantidad=cantidad_tienda-cantidad;
+                            f.getChild("cantidad").setText(String.valueOf(nueva_cantidad));
+                        }
+                        else{
+                         return false;
+                        }
+                    }
+                }
+                
             }
         }
-        return resultado;
-    }*/
-
-
-    /* Para obtener todos las Personas registradas
-     * @return ArrayList con todos los objetos Estudiante  */
-      
- /*   public ArrayList<Estudiante> todosLosEstudiantes() {
-        ArrayList<Estudiante> resultado = new ArrayList<Estudiante>();
-        for (Object it : root.getChildren()) {
-            Element xmlElem = (Element) it;
-            try {
-                resultado.add(EstudianteToObject(xmlElem));
-            } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
+        resultado = updateDocument();
         return resultado;
     }
-*/
 }

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.io.InputStreamReader;
 import controlinventario.DAOInventario;
+import controlinventario.DaoCompras;
 import java.util.Iterator;
 import java.util.List;
 import org.jdom.Element;
@@ -41,10 +42,12 @@ public class InventarioServer {
     private File file;
     private String ruta;
     private DAOInventario inventario;
+    private DaoCompras compra;
     
     public void start(int port, String name) throws IOException {
         
         inventario = new DAOInventario();
+        compra= new DaoCompras();
         ruta ="C:\\Users\\RAM\\Desktop\\";
         System.out.println("Im listening ... on " + port + " I'm " + name);
         this.name = name;
@@ -182,21 +185,7 @@ public class InventarioServer {
                 }
             }
         }else if(greeting.startsWith("ImprimirArticulosxTienda")){
-            out.println("ImprimirArticulosxTienda");
-            /*try{
-            List tiendas = inventario.root.getChildren("tienda");
-            Iterator i = tiendas.iterator();
-            while (i.hasNext()) {
-                Element e = (Element) i.next();
-                out.println("Tienda: "+e.getAttribute("codigo").getValue());
-                List articulos = e.getChildren("articulo");
-                Iterator j = articulos.iterator();
-                    while (j.hasNext()) {
-                        Element f = (Element) j.next();
-                        out.println("Articulo: "+f.getChild("codigo").getValue()+" ,Cantidad: "+f.getChild("cantidad").getValue());
-            }catch(Exception e){
-                e.printStackTrace();
-            } */    
+            out.println("ImprimirArticulosxTienda");   
         }else if(greeting.startsWith("ImprimirArticulosEmpresa")){
             try{
             //inventario.imprimirArticulosEmpresa();
@@ -204,7 +193,55 @@ public class InventarioServer {
             }catch(Exception e){
                 e.printStackTrace();
             }
-        }else {
+        }
+        else if (greeting.startsWith("agregarCompra")){
+            String nombre=name;
+            out.println("Entre en AgregarCompra");
+            int totallength = "agregarCompra".length();
+            String articulo= greeting.substring(totallength,greeting.length());
+            String[] valores= articulo.split("#");
+            String codigoCliente = valores[0];
+            String nombreCliente = valores[1];
+            String codigoArticulo = valores[2];
+            int cantidad = Integer.parseInt(valores[3]);
+            if(valores.length==5){
+                nombre=valores[4];
+            }                                               
+            if(inventario.buscarTienda(nombre)== true){
+                if(inventario.buscarArticulo(nombre, codigoArticulo) == true){   
+                    if(!compra.buscarCliente(codigoCliente)){
+                        compra.agregarCliente(codigoCliente,nombreCliente);
+                    }
+                    if(compra.buscarCompra(codigoCliente, codigoArticulo,nombre))
+                    {
+                        compra.actualizarCompra(codigoCliente, codigoArticulo, cantidad, nombre);
+                    }
+                    else{
+                        compra.agregarCompra(codigoCliente,codigoArticulo,cantidad,nombre);
+                    }
+                    inventario.restarArticulo(nombre,codigoArticulo,cantidad);
+                }else{
+                    //inventario.agregarArticulo(codigoCliente, cantidad, nombre);
+                }
+            }
+            else{
+                out.println("No se pudo realizar la compra porque no existe la tienda");
+            }
+            if(valores.length<5)
+            {
+                for (Map.Entry<String, String> entry : participant.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    if (!key.equals(this.name)) {
+                        ClientMessage sendmessage = new ClientMessage();
+                        sendmessage.startConnection(value.substring(5), new Integer(value.substring(0, 4)));
+                        sendmessage.sendMessage("agregarCompra" + codigoCliente+"#"+nombreCliente+"#"+codigoArticulo+"#"+cantidad+"#"+nombre);
+                        System.out.println("llamé a actualizar compras");
+                    }
+                }
+            }
+        }
+        else {
             System.out.println("Mensaje no reconocido");
             out.println("mensaje corrupto vete de aqui");
         }
@@ -223,9 +260,7 @@ public class InventarioServer {
                 //Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
         this.start(port, name);
-
     }
     
     

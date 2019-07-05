@@ -87,8 +87,10 @@ public class ControlInventario {
                         String val=(String)i.next();
                         String valores[]=val.split("#");
                         System.out.println(valores[0]+"#"+valores[1]);    
-                    }
-                    
+                    }   
+                }
+                if("ImprimirCompras".equals(response)){
+                
                 }
                 
                 System.out.println("Respuesta server: " + response);
