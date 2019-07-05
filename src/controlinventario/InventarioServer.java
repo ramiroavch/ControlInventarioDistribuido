@@ -241,6 +241,9 @@ public class InventarioServer {
                 }
             }
         }
+        else if (greeting.startsWith("ListarComprasClientes")){
+            out.println("ListarComprasClientes");
+        }
         else {
             System.out.println("Mensaje no reconocido");
             out.println("mensaje corrupto vete de aqui");

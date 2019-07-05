@@ -97,7 +97,7 @@ public class DAOInventario {
                         String value=(String) art.get(z);
                         String valores[]=value.split("#");
                         if(valores[0]==f.getChild("codigo").getValue()){
-                        art.set(z,f.getChild("codigo").getValue()+"#"+String.valueOf(Integer.parseInt(valores[1])+Integer.parseInt(f.getChild("cantidad").getValue())));
+                         art.set(z,f.getChild("codigo").getValue()+"#"+String.valueOf(Integer.parseInt(valores[1])+Integer.parseInt(f.getChild("cantidad").getValue())));
                         }else{
                             art.add(f.getChild("codigo").getValue()+"#"+f.getChild("cantidad").getValue());
                         }
@@ -298,4 +298,5 @@ public class DAOInventario {
         resultado = updateDocument();
         return resultado;
     }
+    
 }

@@ -60,6 +60,7 @@ public class ControlInventario {
                 
                 String response = message.sendMessage(args[3]);
                 DAOInventario dao= new DAOInventario();
+                DaoCompras dao2=new DaoCompras();
                 if("ImprimirArticulosxTienda".equals(response)){
                     
                     List tiendas = dao.root.getChildren("tienda");
@@ -89,8 +90,14 @@ public class ControlInventario {
                         System.out.println(valores[0]+"#"+valores[1]);    
                     }   
                 }
-                if("ImprimirCompras".equals(response)){
-                
+                if("ListarComprasClientes".equals(response)){
+                    List tiendas = dao2.sumarCompras2();
+                    Iterator i = tiendas.iterator();
+                    while (i.hasNext()) {
+                        String val=(String)i.next();
+                        String valores[]=val.split("#");
+                        System.out.println(valores[0]+"#"+valores[1]+"#"+valores[2]);    
+                    }
                 }
                 
                 System.out.println("Respuesta server: " + response);
