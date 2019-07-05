@@ -185,14 +185,33 @@ public class DAOInventario {
         }
         return false;
     }
-    public static boolean buscarporArticulo(List raiz, String codigo) {
+    public static boolean buscarporArticulo(List raiz, String codigo,String s,int cantidad) {
         Iterator i = raiz.iterator();
         try{
             while (i.hasNext()) {
                 Element e = (Element) i.next();
-                if (codigo.equals(e.getChild("codigo").getValue())) {
-                    return true;
-                }         
+                if(s.equals("s")){
+                    if (codigo.equals(e.getChild("codigo").getValue())) {
+                        if(Integer.parseInt((e.getChild("cantidad").getValue()))<cantidad){
+                            System.out.println("entre2");
+                            return false;
+                        }
+                        else{
+                            return true;
+                        }
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                else{                    
+                    if (codigo.equals(e.getChild("codigo").getValue())) {
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
             }     
         }catch(Exception e){
             e.printStackTrace();
@@ -231,15 +250,14 @@ public class DAOInventario {
     }
 
     
-    public boolean buscarArticulo(String tiendacod ,String codigo) {
-        
+    public boolean buscarArticulo(String tiendacod ,String codigo,String s,int cantidad) {
         List tiendas = this.root.getChildren("tienda");
         Iterator i = tiendas.iterator();
         while (i.hasNext()) {
             Element e = (Element) i.next();
                 if (tiendacod.equals(e.getAttribute("codigo").getValue())) {
                 List articulos = e.getChildren("articulo");
-                return buscarporArticulo(articulos,codigo);
+                return buscarporArticulo(articulos,codigo,s,cantidad);
             }
         }
         return false;
